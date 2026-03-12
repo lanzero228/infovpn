@@ -1,0 +1,925 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Основы сетевой безопасности</title>
+     <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            line-height: 1.6;
+            color: #e0e0e0;
+            background-color: #0a0c0f;
+        }
+
+        /* Добавляем подключение шрифта Inter */
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        /* Header с фоновым изображением */
+        .header {
+            position: relative;
+            padding: 120px 0;
+            background: linear-gradient(135deg, rgba(0, 102, 255, 0.1) 0%, rgba(10, 12, 15, 0.95) 100%),
+                        url('https://images.unsplash.com/photo-1550751827-4bd374c3f58b?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&q=80') center/cover fixed;
+            border-bottom: 1px solid #2a2f38;
+            overflow: hidden;
+        }
+
+        .header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: radial-gradient(circle at 30% 50%, rgba(0,102,255,0.15) 0%, transparent 50%);
+            pointer-events: none;
+        }
+
+        .header .container {
+            position: relative;
+            z-index: 2;
+        }
+
+        .header h1 {
+            font-size: 4rem;
+            font-weight: 800;
+            margin-bottom: 20px;
+            background: linear-gradient(135deg, #fff 0%, #80b3ff 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            line-height: 1.2;
+            letter-spacing: -0.02em;
+        }
+
+        .header .subtitle {
+            font-size: 1.3rem;
+            color: #cbd5e0;
+            max-width: 700px;
+            margin-bottom: 30px;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .btn {
+            display: inline-block;
+            padding: 16px 45px;
+            background: linear-gradient(135deg, #0066ff, #0052cc);
+            color: white;
+            text-decoration: none;
+            border-radius: 50px;
+            font-weight: 600;
+            font-size: 1.1rem;
+            transition: all 0.3s ease;
+            border: none;
+            cursor: pointer;
+            box-shadow: 0 10px 20px rgba(0,102,255,0.3);
+            letter-spacing: 0.5px;
+        }
+
+        .btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 15px 30px rgba(0,102,255,0.4);
+            background: linear-gradient(135deg, #0052cc, #0040a0);
+        }
+
+        /* Sections */
+        .section {
+            padding: 100px 0;
+            border-bottom: 1px solid #1e232b;
+            position: relative;
+        }
+
+        .section:nth-child(even) {
+            background: linear-gradient(135deg, #0f1217 0%, #0a0c0f 100%);
+        }
+
+        .section-title {
+            font-size: 2.8rem;
+            font-weight: 700;
+            margin-bottom: 20px;
+            color: white;
+            letter-spacing: -0.02em;
+            position: relative;
+            display: inline-block;
+        }
+
+        .section-title::after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: 0;
+            width: 60px;
+            height: 4px;
+            background: linear-gradient(90deg, #0066ff, #00ccff);
+            border-radius: 2px;
+        }
+
+        .section-subtitle {
+            font-size: 1.2rem;
+            color: #9aa4b5;
+            max-width: 800px;
+            margin-bottom: 50px;
+            line-height: 1.8;
+        }
+
+        /* Grids */
+        .grid-3, .grid-4 {
+            display: grid;
+            gap: 30px;
+            margin-top: 40px;
+        }
+
+        .grid-3 {
+            grid-template-columns: repeat(3, 1fr);
+        }
+
+        .grid-4 {
+            grid-template-columns: repeat(4, 1fr);
+        }
+
+        /* Cards с изображениями */
+        .card {
+            background: #151a22;
+            border-radius: 16px;
+            overflow: hidden;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            border: 1px solid #2a2f38;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .card:hover {
+            transform: translateY(-10px);
+            border-color: #0066ff;
+            box-shadow: 0 20px 40px rgba(0,102,255,0.2);
+        }
+
+        .card-image {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+            transition: transform 0.5s ease;
+        }
+
+        .card:hover .card-image {
+            transform: scale(1.05);
+        }
+
+        .card-content {
+            padding: 25px;
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .card-icon {
+            font-size: 2.5rem;
+            margin-bottom: 15px;
+        }
+
+        .card h3 {
+            font-size: 1.4rem;
+            margin-bottom: 12px;
+            color: white;
+            font-weight: 600;
+        }
+
+        .card p {
+            color: #9aa4b5;
+            font-size: 0.95rem;
+            line-height: 1.7;
+            margin-bottom: 20px;
+            flex-grow: 1;
+        }
+
+        .card-tag {
+            color: #0066ff;
+            font-size: 0.85rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-top: auto;
+        }
+
+        /* Feature items */
+        .feature-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 30px;
+            margin-top: 50px;
+        }
+
+        .feature-item {
+            display: flex;
+            gap: 20px;
+            padding: 25px;
+            background: #151a22;
+            border-radius: 16px;
+            border: 1px solid #2a2f38;
+            transition: all 0.3s ease;
+        }
+
+        .feature-item:hover {
+            border-color: #0066ff;
+            transform: translateX(10px);
+        }
+
+        .feature-icon {
+            font-size: 2rem;
+            min-width: 50px;
+            height: 50px;
+            background: linear-gradient(135deg, #1e2530, #151a22);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 1px solid #2a2f38;
+        }
+
+        .feature-content h4 {
+            color: white;
+            margin-bottom: 10px;
+            font-size: 1.3rem;
+            font-weight: 600;
+        }
+
+        .feature-content p {
+            color: #9aa4b5;
+            line-height: 1.7;
+        }
+
+        /* Article cards */
+        .article-card {
+            background: #151a22;
+            border-radius: 16px;
+            overflow: hidden;
+            border: 1px solid #2a2f38;
+            transition: all 0.4s ease;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .article-card:hover {
+            border-color: #0066ff;
+            transform: translateY(-10px);
+            box-shadow: 0 20px 40px rgba(0,102,255,0.2);
+        }
+
+        .article-image {
+            width: 100%;
+            height: 220px;
+            object-fit: cover;
+            transition: transform 0.5s ease;
+        }
+
+        .article-card:hover .article-image {
+            transform: scale(1.05);
+        }
+
+        .article-content {
+            padding: 25px;
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .article-content h3 {
+            color: white;
+            margin-bottom: 12px;
+            font-size: 1.4rem;
+            font-weight: 600;
+        }
+
+        .article-content p {
+            color: #9aa4b5;
+            margin-bottom: 20px;
+            line-height: 1.7;
+            flex-grow: 1;
+        }
+
+        .read-more {
+            color: #0066ff;
+            text-decoration: none;
+            font-weight: 600;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            transition: gap 0.3s ease;
+        }
+
+        .read-more:hover {
+            gap: 12px;
+            text-decoration: underline;
+        }
+
+        /* FAQ */
+        .faq-container {
+            max-width: 900px;
+            margin: 40px auto 0;
+        }
+
+        .faq-item {
+            background: #151a22;
+            border: 1px solid #2a2f38;
+            border-radius: 12px;
+            margin-bottom: 15px;
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .faq-item:hover {
+            border-color: #0066ff;
+        }
+
+        .faq-question {
+            padding: 22px 25px;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-weight: 600;
+            color: white;
+            font-size: 1.1rem;
+            transition: background 0.3s ease;
+        }
+
+        .faq-question:hover {
+            background: #1a202a;
+        }
+
+        .faq-question span {
+            color: #0066ff;
+            font-size: 1.2rem;
+            transition: transform 0.3s ease;
+        }
+
+        .faq-item:hover .faq-question span {
+            transform: rotate(180deg);
+        }
+
+        .faq-answer {
+            padding: 0 25px 22px 25px;
+            color: #9aa4b5;
+            line-height: 1.8;
+            border-top: 1px solid #2a2f38;
+            margin-top: -1px;
+        }
+
+        /* News */
+        .news-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 25px;
+            margin-top: 50px;
+        }
+
+        .news-item {
+            background: #151a22;
+            border-radius: 16px;
+            overflow: hidden;
+            border: 1px solid #2a2f38;
+            transition: all 0.3s ease;
+        }
+
+        .news-item:hover {
+            border-color: #0066ff;
+            transform: translateY(-5px);
+        }
+
+        .news-image {
+            width: 100%;
+            height: 160px;
+            object-fit: cover;
+        }
+
+        .news-content {
+            padding: 20px;
+        }
+
+        .news-date {
+            color: #0066ff;
+            font-size: 0.85rem;
+            font-weight: 600;
+            margin-bottom: 8px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .news-item h4 {
+            color: white;
+            margin-bottom: 10px;
+            font-size: 1.2rem;
+        }
+
+        .news-item p {
+            color: #9aa4b5;
+            font-size: 0.95rem;
+            line-height: 1.6;
+        }
+
+        /* Footer */
+        .footer {
+            background: #0a0c0f;
+            padding: 60px 0 40px;
+            border-top: 1px solid #1e232b;
+        }
+
+        .footer-content {
+            display: grid;
+            grid-template-columns: 2fr 1fr 1fr;
+            gap: 50px;
+            margin-bottom: 40px;
+        }
+
+        .footer-logo {
+            font-size: 1.5rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, #fff, #80b3ff);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 15px;
+            display: inline-block;
+        }
+
+        .footer-description {
+            color: #6a7485;
+            line-height: 1.7;
+            margin-bottom: 20px;
+        }
+
+        .footer-links h4 {
+            color: white;
+            margin-bottom: 20px;
+            font-size: 1.1rem;
+        }
+
+        .footer-links a {
+            color: #9aa4b5;
+            text-decoration: none;
+            display: block;
+            margin-bottom: 12px;
+            transition: color 0.3s ease;
+        }
+
+        .footer-links a:hover {
+            color: #0066ff;
+        }
+
+        .social-links {
+            display: flex;
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .social-link {
+            width: 40px;
+            height: 40px;
+            background: #1e232b;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            border: 1px solid #2a2f38;
+        }
+
+        .social-link:hover {
+            background: #0066ff;
+            transform: translateY(-3px);
+            border-color: #0066ff;
+        }
+
+        .footer-bottom {
+            text-align: center;
+            padding-top: 40px;
+            border-top: 1px solid #1e232b;
+            color: #6a7485;
+        }
+
+        .back-to-top {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 50px;
+            height: 50px;
+            background: #0066ff;
+            color: white;
+            text-decoration: none;
+            border-radius: 50%;
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            font-size: 1.2rem;
+            transition: all 0.3s ease;
+            opacity: 0;
+            visibility: hidden;
+            z-index: 1000;
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .back-to-top.visible {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .back-to-top:hover {
+            background: #0052cc;
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0,102,255,0.3);
+        }
+
+        /* Responsive */
+        @media (max-width: 992px) {
+            .grid-4 {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            
+            .feature-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .news-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            
+            .footer-content {
+                grid-template-columns: 1fr 1fr;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 2.8rem;
+            }
+            
+            .grid-3, .grid-4, .news-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .section {
+                padding: 60px 0;
+            }
+            
+            .section-title {
+                font-size: 2.2rem;
+            }
+            
+            .footer-content {
+                grid-template-columns: 1fr;
+                gap: 30px;
+            }
+            
+            .back-to-top {
+                bottom: 20px;
+                right: 20px;
+            }
+        }
+
+        /* Animation */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .section {
+            animation: fadeInUp 1s ease;
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="container">
+            <h1>Безопасность в сети</h1>
+            <p class="subtitle">Узнайте о шифровании, VPN и защите персональных данных. Получите полезные советы и рекомендации для обеспечения безопасности в сети.</p>
+            <a href="#start" class="btn">Начать изучение</a>
+        </div>
+    </header>
+
+    <!-- Why important -->
+    <section class="section" id="start">
+        <div class="container">
+            <h2 class="section-title">Почему важна безопасность в сети</h2>
+            <p class="section-subtitle">Рассмотрены основные угрозы в сети и объяснено, почему важно заботиться о безопасности. Показано, как наш сайт может помочь в преодолении этих угроз.</p>
+            
+            <div class="grid-3">
+                <div class="card">
+                    <img class="card-image" src="https://static.tildacdn.pub/tild6164-3563-4464-a464-613331373538/photo-1732400450419-.jpg" alt="Шифрование данных">
+                    <div class="card-content">
+                        <div class="card-icon">🔒</div>
+                        <h3>Шифрование данных</h3
+                        <p>Защитите свои личные данные с помощью шифрования, чтобы предотвратить их несанкционированный доступ.</p>
+                        <span class="card-tag">#шифрование</span>
+                    </div>
+                </div>
+                <div class="card">
+                    <img class="card-image" src="https://i.pinimg.com/736x/17/49/d6/1749d654e1712a713542dfee78b3de78.jpg" alt="Защита от хакеров">
+                    <div class="card-content">
+                        <div class="card-icon">🛡️</div>
+                        <h3>Защита от хакеров</h3>
+                        <p>Узнайте о методах защиты от хакеров и вредоносного ПО, чтобы обезопасить себя в сети.</p>
+                        <span class="card-tag">#безопасность</span>
+                    </div>
+                </div>
+                <div class="card">
+                    <img class="card-image" src="https://static.tildacdn.pub/tild3665-3335-4164-a234-343663643636/photo-1524635962361-.jpg" alt="Защита персональных данных">
+                    <div class="card-content">
+                        <div class="card-icon">👤</div>
+                        <h3>Защита персональных данных</h3>
+                        <p>Узнайте, как защитить свои персональные данные в сети и избежать их утечки.</p>
+                        <span class="card-tag">#приватность</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Key concepts -->
+    <section class="section">
+        <div class="container">
+            <h2 class="section-title">Основные понятия безопасности</h2>
+            <p class="section-subtitle">Объяснены ключевые термины, такие как шифрование, VPN и защита персональных данных. Понимание этих понятий поможет вам лучше ориентироваться в вопросах безопасности.</p>
+            
+            <div class="grid-4">
+                <div class="card">
+                    <img class="card-image" src="https://static.tildacdn.pub/tild6334-3530-4961-b238-313339333834/photo-1674303440321-.jpg" alt="Шифрование">
+                    <div class="card-content">
+                        <h3>🔐 Шифрование</h3>
+                        <p>Обеспечивает конфиденциальность данных, делая их недоступными для посторонних.</p>
+                    </div>
+                </div>
+                <div class="card">
+                    <img class="card-image" src="https://static.tildacdn.pub/tild3138-3330-4134-b364-643337316432/photo-1603985529862-.jpg" alt="VPN">
+                    <div class="card-content">
+                        <h3>🌐 VPN</h3>
+                        <p>Создаёт защищённое соединение, позволяя безопасно пользоваться интернетом в открытых сетях.</p>
+                    </div>
+                </div>
+                <div class="card">
+                    <img class="card-image" src="https://static.tildacdn.pub/tild3763-3264-4137-b163-363336326536/photo-1768839721176-.jpg" alt="Защита данных">
+                    <div class="card-content">
+                        <h3>👁️ Защита данных</h3>
+                        <p>Предотвращает несанкционированный доступ к личной информации, защищая вашу приватность.</p>
+                    </div>
+                </div>
+                <div class="card">
+                    <img class="card-image" src="https://i.pinimg.com/736x/b1/88/c5/b188c577d853bc2b3b03fe36e3039c06.jpg" alt="Значимость">
+                    <div class="card-content">
+                        <h3>🎯 Значимость</h3>
+                        <p>Владение этими знаниями помогает защититься от киберугроз и сохранить личную информацию.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Articles -->
+    <section class="section">
+        <div class="container">
+            <h2 class="section-title">Статьи о безопасности</h2>
+            <p class="section-subtitle">Подробные обзоры различных аспектов безопасности в сети, включая выбор надёжного VPN, защиту от хакеров и шифрование данных.</p>
+            
+            <div class="grid-3">
+                <div class="article-card">
+                    <img class="article-image" src="https://static.tildacdn.pub/tild3937-3532-4661-b033-643633383664/photo-1584433144859-.jpg" alt="Выбор VPN">
+                    <div class="article-content">
+                        <h3>Как выбрать надёжный VPN</h3>
+                        <p>Узнайте, как правильно выбрать VPN для обеспечения анонимности и защиты данных. Сравнение популярных сервисов и ключевые критерии выбора.</p>
+                      
+                    </div>
+                </div>
+                <div class="article-card">
+                    <img class="article-image" src="https://i.pinimg.com/736x/f0/d7/f7/f0d7f72989eed172a8def92f9b24f97e.jpg" alt="Защита от хакеров">
+                    <div class="article-content">
+                        <h3>Защита от хакеров</h3>
+                        <p>Основные методы защиты от хакерских атак и способы минимизации рисков. Актуальные рекомендации экспертов.</p>
+                    </div>
+                </div>
+                <div class="article-card">
+                    <img class="article-image" src="https://i.pinimg.com/1200x/e3/64/58/e364582935abca0eea019a914c47c58d.jpg" alt="Шифрование данных">
+                    <div class="article-content">
+                        <h3>Шифрование данных</h3>
+                        <p>Принципы и методы шифрования данных для обеспечения их конфиденциальности. Современные стандарты шифрования.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Practical tips -->
+    <section class="section">
+        <div class="container">
+            <h2 class="section-title">Практические советы</h2>
+            <p class="section-subtitle">Рекомендации по созданию надёжных паролей, защите устройств и предотвращению фишинговых атак. Следуя этим советам, вы сможете значительно повысить свою безопасность в сети.</p>
+            
+            <div class="feature-grid">
+                <div class="feature-item">
+                    <div class="feature-icon">🔑</div>
+                    <div class="feature-content">
+                        <h4>Создание надёжного пароля</h4>
+                        <p>Узнайте, как создать сложный и надёжный пароль для защиты ваших учётных записей. Используйте менеджеры паролей.</p>
+                    </div>
+                </div>
+                <div class="feature-item">
+                    <div class="feature-icon">💻</div>
+                    <div class="feature-content">
+                        <h4>Защита устройств</h4>
+                        <p>Практические советы по защите ваших компьютеров, смартфонов и других устройств от угроз в сети.</p>
+                    </div>
+                </div>
+                <div class="feature-item">
+                    <div class="feature-icon">🎣</div>
+                    <div class="feature-content">
+                        <h4>Избегание фишинговых атак</h4>
+                        <p>Узнайте, как распознать фишинговые письма и не стать жертвой мошенников. Проверяйте отправителей.</p>
+                    </div>
+                </div>
+                <div class="feature-item">
+                    <div class="feature-icon">🌐</div>
+                    <div class="feature-content">
+                        <h4>VPN и шифрование</h4>
+                        <p>Информация о том, как использовать VPN и шифрование для защиты ваших данных в интернете.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- FAQ -->
+    <section class="section">
+        <div class="container">
+            <h2 class="section-title">FAQ</h2>
+            
+            <div class="faq-container">
+                <div class="faq-item">
+                    <div class="faq-question">
+                        Что такое шифрование данных?
+                        <span>▼</span>
+                    </div>
+                    <div class="faq-answer">
+                        Шифрование данных — это процесс преобразования информации в зашифрованный вид, который может быть прочитан только с помощью ключа дешифрования. Это обеспечивает защиту данных от несанкционированного доступа.
+                    </div>
+                </div>
+
+                <div class="faq-item">
+                    <div class="faq-question">
+                        Для чего нужен VPN?
+                        <span>▼</span>
+                    </div>
+                    <div class="faq-answer">
+                        VPN (Virtual Private Network) — это технология, которая позволяет создать защищённое соединение между вашим устройством и интернетом. Она обеспечивает конфиденциальность и защиту данных при использовании общественных Wi-Fi сетей.
+                    </div>
+                </div>
+
+                <div class="faq-item">
+                    <div class="faq-question">
+                        Как защитить персональные данные?
+                        <span>▼</span>
+                    </div>
+                    <div class="faq-answer">
+                        Для защиты персональных данных в интернете рекомендуется использовать сложные пароли, регулярно их менять, не раскрывать личную информацию в публичных местах и использовать VPN при работе в общественных сетях.
+                    </div>
+                </div>
+
+                <div class="faq-item">
+                    <div class="faq-question">
+                        Чем опасен общественный Wi-Fi?
+                        <span>▼</span>
+                    </div>
+                    <div class="faq-answer">
+                        Использование общественных Wi-Fi сетей может привести к риску перехвата данных злоумышленниками, так как такие сети часто не защищены должным образом.
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- News -->
+    <section class="section">
+        <div class="container">
+            <h2 class="section-title">Новости и обновления</h2>
+            <p class="section-subtitle">Актуальные события и новости, связанные с безопасностью в сети. Будьте в курсе последних тенденций и угроз.</p>
+            
+            <div class="news-grid">
+                <div class="news-item">
+                    <img class="news-image" src="https://i.pinimg.com/736x/4f/fd/3c/4ffd3cb2376522b88092a85349673375.jpg" alt="Шифрование данных">
+                    <div class="news-content">
+                        <div class="news-date">15 марта 2024</div>
+                        <h4>Шифрование данных</h4>
+                        <p>Основные принципы и методы шифрования информации для защиты данных в сети.</p>
+                    </div>
+                </div>
+
+                <div class="news-item">
+                    <img class="news-image" src="https://i.pinimg.com/1200x/23/e3/83/23e3831d3dd1d42a5d61fb86a26b3915.jpg" alt="Рост использования VPN">
+                    <div class="news-content">
+                        <div class="news-date">10 марта 2024</div>
+                        <h4>Рост использования VPN</h4>
+                        <p>Последние тенденции и статистика использования VPN для обеспечения анонимности и защиты данных.</p>
+                    </div>
+                </div>
+
+                <div class="news-item">
+                    <img class="news-image" src="https://i.pinimg.com/736x/17/e9/82/17e982b795993b48a7529c2d4a92114c.jpg" alt="Актуальные угрозы">
+                    <div class="news-content">
+                        <div class="news-date">5 марта 2024</div>
+                        <h4>Актуальные угрозы</h4>
+                        <p>Обзор наиболее распространённых угроз и методов защиты персональных данных в интернете.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div>
+                    <span class="footer-logo">Индивидуальный проект</span>
+                    <p class="footer-description">Данный сайт поможет вам в решении ситуаций с шифрованием данных и использвоанием VPN</p>
+                    <div class="social-links">
+                        <a href="https://vk.com/" class="social-link">📘</a>
+                        <a href="https://t.me/minsonisg" class="social-link">🐦</a>
+                    </div>
+                </div>
+                
+            </div>
+            <div class="footer-bottom">
+                <p>© 2026 Сконструиррованно и разработанно Романом Дмитриевичем. Защищено FFS.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Back to top button -->
+    <a href="#" class="back-to-top" id="backToTop">↑</a>
+
+    <script>
+        // Back to top button visibility
+        window.addEventListener('scroll', function() {
+            const button = document.getElementById('backToTop');
+            if (window.scrollY > 500) {
+                button.classList.add('visible');
+            } else {
+                button.classList.remove('visible');
+            }
+        });
+
+        // Smooth scroll for anchor links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+
+        // FAQ accordion functionality
+        document.querySelectorAll('.faq-question').forEach(question => {
+            question.addEventListener('click', () => {
+                const answer = question.nextElementSibling;
+                const arrow = question.querySelector('span');
+                
+                // Toggle answer visibility
+                if (answer.style.display === 'none' || !answer.style.display) {
+                    answer.style.display = 'block';
+                    arrow.style.transform = 'rotate(180deg)';
+                } else {
+                    answer.style.display = 'none';
+                    arrow.style.transform = 'rotate(0deg)';
+                }
+            });
+        });
+    </script>
+    
+</body>
+</html>
